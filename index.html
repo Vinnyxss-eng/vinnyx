@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vinnyx — Digital Marketplace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07070a;
+  --panel: #101017;
+  --line: #22222f;
+  --muted: #9393a5;
+  --accent: #9b6cff;
+  --accent2: #c4a1ff;
+  --discord: #5865f2;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
+body {
+  background: radial-gradient(circle at 80% -5%, #2a1458 0, #07070a 45%);
+  color: #fff; min-height: 100vh; padding-bottom: 120px;
+}
+button, input, select, textarea { font: inherit; outline: none; }
+button { cursor: pointer; border: 0; }
+.wrap { max-width: 1100px; margin: auto; padding: 0 16px; }
+
+/* HEADER */
+header {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(7, 7, 10, 0.92); backdrop-filter: blur(20px);
+  border-bottom: 1px solid #191924;
+}
+.nav { height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.brand { font-size: 22px; font-weight: 900; letter-spacing: -1px; text-decoration: none; color: #fff; }
+.brand span { color: var(--accent); }
+.nav-actions { display: flex; align-items: center; gap: 8px; }
+.btn-nav {
+  background: #14141d; border: 1px solid var(--line); color: #fff;
+  padding: 8px 12px; border-radius: 12px; font-weight: 700; font-size: 12px;
+  display: flex; align-items: center; gap: 5px;
+}
+.btn-discord {
+  background: var(--discord); color: #fff; padding: 8px 12px;
+  border-radius: 12px; font-weight: 800; font-size: 12px; display: flex; align-items: center; gap: 5px;
+  text-decoration: none;
+}
+
+/* HERO */
+.hero { padding: 30px 0 20px; }
+.tag-badge {
+  display: inline-block; background: rgba(155, 108, 255, 0.15); color: var(--accent2);
+  border: 1px solid rgba(155, 108, 255, 0.3); padding: 4px 10px; border-radius: 99px;
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px;
+}
+.hero h1 { font-size: clamp(34px, 5.5vw, 56px); font-weight: 900; line-height: 1.05; letter-spacing: -2px; margin-bottom: 10px; }
+.hero h1 span { color: var(--accent2); }
+.hero p { color: var(--muted); font-size: 14px; max-width: 500px; line-height: 1.5; }
+
+/* SEARCH & FILTER */
+.bar-tools { display: flex; flex-direction: column; gap: 12px; margin: 20px 0; }
+.search-input {
+  width: 100%; background: #12121a; border: 1px solid var(--line);
+  border-radius: 13px; padding: 11px 16px; color: #fff; font-size: 13px;
+}
+.search-input:focus { border-color: var(--accent); }
+.cat-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+.cat-btn {
+  background: #101016; color: #888; border: 1px solid var(--line);
+  padding: 7px 15px; border-radius: 99px; font-size: 12px; font-weight: 700; white-space: nowrap;
+}
+.cat-btn.active { background: rgba(155, 108, 255, 0.2); color: #d9caff; border-color: var(--accent); }
+
+/* GRID */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; }
+.card {
+  background: #101016; border: 1px solid var(--line); border-radius: 18px;
+  padding: 12px; display: flex; flex-direction: column; transition: 0.2s;
+}
+.card:hover { border-color: #553c82; transform: translateY(-3px); }
+.card-preview {
+  height: 125px; border-radius: 13px; background: linear-gradient(135deg, #1b122e, #111118);
+  display: grid; place-items: center; font-size: 42px; border: 1px solid #1f1b2b; margin-bottom: 10px;
+}
+.card-cat { font-size: 10px; font-weight: 800; color: #a487ed; text-transform: uppercase; }
+.card-title { font-size: 15px; font-weight: 800; margin: 3px 0 5px; }
+.card-desc { font-size: 11px; color: var(--muted); line-height: 1.4; margin-bottom: 12px; flex: 1; }
+.card-row { display: flex; align-items: center; justify-content: space-between; }
+.price { font-size: 17px; font-weight: 900; color: #dacbff; }
+.btn-buy {
+  background: #fff; color: #000; padding: 7px 12px; border-radius: 9px;
+  font-size: 12px; font-weight: 800; transition: .15s;
+}
+.btn-buy:hover { background: var(--accent); color: #fff; }
+
+/* MODALS */
+.modal {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(8px); z-index: 100; align-items: center; justify-content: center; padding: 14px;
+}
+.modal.open { display: flex; }
+.modal-box {
+  background: #111118; border: 1px solid #332e42; border-radius: 20px;
+  padding: 20px; width: min(450px, 100%); max-height: 88vh; overflow-y: auto; position: relative;
+}
+.modal-close {
+  position: absolute; right: 14px; top: 14px; background: #1c1c28;
+  color: #aaa; width: 28px; height: 28px; border-radius: 50%; font-size: 15px;
+}
+.f-input {
+  width: 100%; background: #151520; border: 1px solid var(--line);
+  border-radius: 10px; padding: 9px 12px; color: #fff; font-size: 13px; margin-top: 4px;
+}
+.f-input:focus { border-color: var(--accent); }
+.f-group { margin-bottom: 12px; }
+.f-group label { font-size: 11px; font-weight: 700; color: #bca3ff; text-transform: uppercase; }
+
+.btn-purple {
+  width: 100%; background: var(--accent); color: #fff; padding: 11px;
+  border-radius: 11px; font-weight: 800; font-size: 13px; margin-top: 8px;
+}
+.btn-ticket {
+  width: 100%; background: var(--discord); color: #fff; padding: 12px;
+  border-radius: 11px; font-weight: 800; font-size: 13px; margin-top: 10px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+
+/* MUSIC */
+.player {
+  position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%);
+  width: min(500px, calc(100% - 24px)); background: rgba(16, 16, 24, 0.94);
+  backdrop-filter: blur(20px); border: 1px solid #362f44; border-radius: 18px;
+  padding: 9px 13px; display: flex; align-items: center; gap: 10px; z-index: 60;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+}
+.play-btn {
+  width: 36px; height: 36px; border-radius: 50%; background: var(--accent);
+  color: #fff; font-size: 13px; font-weight: 900; display: grid; place-items: center; flex-shrink: 0;
+}
+.player-info { flex: 1; min-width: 0; }
+.player-info b { font-size: 12px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.player-info small { color: #888; font-size: 10px; display: block; }
+
+footer { text-align: center; color: #555; font-size: 11px; padding: 30px 0 60px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="#" class="brand">Vin<i>nyx</i></a>
+    <div class="nav-actions">
+      <a href="https://discord.gg/P2ADudbMg" target="_blank" class="btn-discord">🎮 Discord</a>
+      <button class="btn-nav" onclick="openModal('adminModal')">⚡ Admin</button>
+      <button class="btn-nav" onclick="openCart()">🛒 <span id="cartCount">0</span></button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="tag-badge">⚡ Automated Discord Delivery</div>
+    <h1>Digital Accounts<br><span>& Game Drops</span></h1>
+    <p>Select your items, complete payment via UPI/Crypto, and receive instant credentials in your private Discord ticket.</p>
+  </section>
+
+  <div class="bar-tools">
+    <input type="text" id="searchBox" class="search-input" placeholder="Search games, OTT, Nitro..." oninput="renderStore()">
+    <div class="cat-scroll" id="catList"></div>
+  </div>
+
+  <div class="grid" id="productGrid"></div>
+</main>
+
+<footer>
+  Developed by <b>Vinny</b> · © 2026 Vinnyx · Backed by Discord Tickets
+</footer>
+
+<!-- MUSIC PLAYER -->
+<div class="player">
+  <button class="play-btn" id="playBtn" onclick="toggleMusic()">▶</button>
+  <div class="player-info">
+    <b>Vinnyx Ambient Synth</b>
+    <small id="audioStatus">Tap to stream Lo-Fi radio</small>
+  </div>
+</div>
+<audio id="audioEl" loop><source src="music.mp3" type="audio/mpeg"></audio>
+
+<!-- CART / DISCORD TICKET CHECKOUT MODAL -->
+<div class="modal" id="cartModal" onclick="if(event.target===this)closeModal('cartModal')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('cartModal')">×</button>
+    <h2 style="font-size:18px; font-weight:900; margin-bottom:8px;">Your Order</h2>
+    <div id="cartItems"></div>
+    
+    <div style="display:flex; justify-content:space-between; margin:14px 0 10px; font-weight:900;">
+      <span>Total Amount:</span>
+      <span id="cartTotal" style="color:var(--accent2); font-size:18px;">₹0</span>
+    </div>
+
+    <!-- PAYMENT WALLETS -->
+    <div style="background:#151520; padding:12px; border-radius:12px; border:1px solid var(--line); margin-top:8px;">
+      <label style="font-size:10px; font-weight:800; color:#bca3ff;">PAYMENT DETAILS:</label>
+      <div style="margin-top:6px; font-size:12px;">
+        <div style="background:#1a1a26; padding:8px; border-radius:8px; margin-bottom:5px;">
+          <b>UPI ID:</b> <span id="displayUPI" style="color:#00e676;">vinnyx@upi</span>
+        </div>
+        <div style="background:#1a1a26; padding:8px; border-radius:8px;">
+          <b>Litecoin (LTC):</b> <br><small id="displayLTC" style="word-break:break-all; color:#ffd54f;">LTC_ADDRESS_HERE</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="f-group" style="margin-top:12px;">
+      <label>Your Discord Username</label>
+      <input type="text" id="orderDiscordUser" class="f-input" placeholder="e.g. vinit#0001 or @vinit">
+    </div>
+
+    <div class="f-group">
+      <label>Payment UTR / TxID Reference</label>
+      <input type="text" id="orderTx" class="f-input" placeholder="12-digit UPI UTR or Crypto TxID">
+    </div>
+
+    <button class="btn-ticket" id="submitBtn" onclick="submitDiscordTicketOrder()">
+      🎟️ Submit & Open Discord Ticket
+    </button>
+  </div>
+</div>
+
+<!-- ADMIN MODAL -->
+<div class="modal" id="adminModal" onclick="if(event.target===this)closeModal('adminModal')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('adminModal')">×</button>
+    
+    <!-- PIN SCREEN -->
+    <div id="pinBox">
+      <h2 style="font-size:17px; font-weight:900; margin-bottom:6px;">Admin Access</h2>
+      <p style="font-size:12px; color:#888; margin-bottom:12px;">Enter Master Password:</p>
+      <input type="password" id="passInput" class="f-input" placeholder="Password">
+      <button class="btn-purple" onclick="unlockAdmin()">Unlock</button>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashBox" style="display:none;">
+      <h2 style="font-size:18px; font-weight:900; margin-bottom:4px;">Store Settings</h2>
+      <p style="font-size:11px; color:#888; margin-bottom:14px;">Connected with Discord Webhook & Server.</p>
+
+      <div class="f-group">
+        <label>Discord Webhook URL</label>
+        <input type="text" id="setWebhook" class="f-input">
+      </div>
+
+      <div class="f-group">
+        <label>Discord Server / Ticket Link</label>
+        <input type="text" id="setDiscordLink" class="f-input">
+      </div>
+
+      <div class="f-group">
+        <label>Your UPI ID</label>
+        <input type="text" id="setUPI" class="f-input">
+      </div>
+
+      <div class="f-group">
+        <label>Your Litecoin (LTC) Address</label>
+        <input type="text" id="setLTC" class="f-input">
+      </div>
+
+      <hr style="border:0; border-top:1px solid var(--line); margin:14px 0;">
+
+      <h3 style="font-size:13px; color:#c4a1ff; margin-bottom:8px;">➕ Add Product / Drop</h3>
+      <div class="f-group">
+        <label>Account Name</label>
+        <input type="text" id="addName" class="f-input" placeholder="e.g. Valorant Ascendant 1">
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+        <div class="f-group">
+          <label>Category</label>
+          <input type="text" id="addCat" class="f-input" placeholder="Gaming / OTT">
+        </div>
+        <div class="f-group">
+          <label>Price (₹)</label>
+          <input type="number" id="addPrice" class="f-input" placeholder="499">
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:70px 1fr; gap:8px;">
+        <div class="f-group">
+          <label>Emoji</label>
+          <input type="text" id="addEmoji" class="f-input" value="🎮">
+        </div>
+        <div class="f-group">
+          <label>Description</label>
+          <input type="text" id="addDesc" class="f-input" placeholder="Original mail verified">
+        </div>
+      </div>
+
+      <button class="btn-purple" onclick="addDrop()">Add to Store</button>
+
+      <!-- EXPORT BUTTON -->
+      <button class="btn-ticket" style="background:#3a2868; border:1px solid #6b43bf; margin-top:12px;" onclick="downloadUpdatedHTML()">
+        📥 Download Updated index.html (For Netlify)
+      </button>
+
+      <div style="margin-top:16px;">
+        <label style="font-size:11px; font-weight:800; color:#888;">CURRENT DROPS:</label>
+        <div id="adminDropsList" style="margin-top:8px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// --- CONFIG (PRE-CONFIGURED WITH YOUR DISCORD WEBHOOK & SERVER) ---
+let config = {
+  webhook: "https://discord.com/api/webhooks/1551611545853632512/Swr6jYwaOD7GoNOsa42c0e8xwU0Xb0AywcfFqnoTp-Aj6xCUK3XSFqK4Ye46Rcd4KA6d",
+  discordInvite: "https://discord.gg/P2ADudbMg",
+  upi: "vinnyx@upi",
+  ltc: "LTC_WALLET_ADDRESS_HERE"
+};
+
+let store = [
+  { id: 1, name: "Valorant Ranked Smurf", cat: "Gaming", price: 499, emoji: "🎯", desc: "Level 20+, unverified mail, instant dispatch in ticket." },
+  { id: 2, name: "GTA V Full Access", cat: "Gaming", price: 699, emoji: "🚗", desc: "Rockstar original mail included with online bonus." },
+  { id: 3, name: "Discord Nitro 1 Month", cat: "Nitro", price: 199, emoji: "💎", desc: "Global promo activation link for any account." },
+  { id: 4, name: "Spotify 3 Months Family", cat: "OTT", price: 149, emoji: "🎵", desc: "Ad-free individual streaming on personal mail." }
+];
+
+// Load local overrides if edited
+const savedStore = localStorage.getItem('v_store_v2');
+if (savedStore) { try { store = JSON.parse(savedStore); } catch(e){} }
+const savedConfig = localStorage.getItem('v_config_v2');
+if (savedConfig) { try { config = JSON.parse(savedConfig); } catch(e){} }
+
+let activeCat = "All";
+let cart = [];
+
+// --- STORE RENDERING ---
+function renderStore() {
+  const cats = ["All", ...new Set(store.map(s => s.cat))];
+  document.getElementById('catList').innerHTML = cats.map(c => `
+    <button class="cat-btn ${c === activeCat ? 'active' : ''}" onclick="setCat('${c}')">${c}</button>
+  `).join('');
+
+  const q = document.getElementById('searchBox').value.toLowerCase();
+  const filtered = store.filter(item => {
+    const matchC = activeCat === "All" || item.cat.toLowerCase() === activeCat.toLowerCase();
+    const matchQ = item.name.toLowerCase().includes(q) || item.desc.toLowerCase().includes(q);
+    return matchC && matchQ;
+  });
+
+  const grid = document.getElementById('productGrid');
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:30px; color:#777;">No drops found.</div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(item => `
+    <div class="card">
+      <div class="card-preview">${item.emoji || '📦'}</div>
+      <div class="card-cat">${item.cat}</div>
+      <div class="card-title">${item.name}</div>
+      <div class="card-desc">${item.desc}</div>
+      <div class="card-row">
+        <span class="price">₹${item.price}</span>
+        <button class="btn-buy" onclick="addToCart(${item.id})">Add to Cart</button>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('displayUPI').textContent = config.upi;
+  document.getElementById('displayLTC').textContent = config.ltc;
+}
+
+function setCat(c) {
+  activeCat = c;
+  renderStore();
+}
+
+// --- CART ---
+function addToCart(id) {
+  const item = store.find(s => s.id === id);
+  if (!item) return;
+  const inCart = cart.find(c => c.id === id);
+  if (inCart) inCart.qty++;
+  else cart.push({ ...item, qty: 1 });
+  updateCart();
+  alert(`${item.name} added!`);
+}
+
+function updateCart() {
+  document.getElementById('cartCount').textContent = cart.reduce((a, b) => a + b.qty, 0);
+}
+
+function openCart() {
+  const container = document.getElementById('cartItems');
+  const totalEl = document.getElementById('cartTotal');
+  if (cart.length === 0) {
+    container.innerHTML = `<p style="color:#777; text-align:center; padding:15px 0;">Cart is empty.</p>`;
+    totalEl.textContent = "₹0";
+  } else {
+    let sum = 0;
+    container.innerHTML = cart.map((c, i) => {
+      sum += c.price * c.qty;
+      return `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #1a1a24;">
+          <div>
+            <b>${c.name}</b>
+            <div style="font-size:11px; color:#888;">₹${c.price} ×${c.qty}</div>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button onclick="qtyDelta(${i}, -1)" style="background:#1f1f2c; color:#fff; padding:2px 7px; border-radius:5px;">-</button>
+            <span>${c.qty}</span>
+            <button onclick="qtyDelta(${i}, 1)" style="background:#1f1f2c; color:#fff; padding:2px 7px; border-radius:5px;">+</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+    totalEl.textContent = `₹${sum}`;
+  }
+  openModal('cartModal');
+}
+
+function qtyDelta(i, d) {
+  cart[i].qty += d;
+  if (cart[i].qty <= 0) cart.splice(i, 1);
+  updateCart();
+  openCart();
+}
+
+// --- SUBMIT ORDER & SEND TO DISCORD WEBHOOK ---
+async function submitDiscordTicketOrder() {
+  if (cart.length === 0) return alert("Cart is empty!");
+  const discordUser = document.getElementById('orderDiscordUser').value.trim();
+  const tx = document.getElementById('orderTx').value.trim();
+
+  if (!discordUser) return alert("Please enter your Discord Username!");
+  if (!tx) return alert("Please enter payment UTR / TxID Reference!");
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = "Sending Alert to Staff...";
+
+  let total = 0;
+  let itemsList = "";
+  cart.forEach(c => {
+    itemsList += `• **${c.name}** (x${c.qty}) — ₹${c.price * c.qty}\n`;
+    total += c.price * c.qty;
+  });
+
+  // Create Discord Rich Embed payload
+  const payload = {
+    username: "Vinnyx Order Bot",
+    avatar_url: "https://i.imgur.com/4M34hi2.png",
+    embeds: [
+      {
+        title: "🛒 NEW PURCHASE ORDER RECEIVED",
+        color: 0x9b6cff,
+        fields: [
+          { name: "👤 Customer Discord", value: `\`${discordUser}\``, inline: true },
+          { name: "💰 Total Paid", value: `**₹${total}**`, inline: true },
+          { name: "🧾 Payment UTR / TxID", value: `\`${tx}\``, inline: false },
+          { name: "📦 Purchased Items", value: itemsList, inline: false }
+        ],
+        footer: { text: "Verify payment in bank/wallet and dispatch login details in Ticket." },
+        timestamp: new Date().toISOString()
+      }
+    ]
+  };
+
+  try {
+    // Send to Discord Webhook
+    await fetch(config.webhook, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+  } catch(e) {
+    console.error("Webhook error:", e);
+  }
+
+  // Copy order summary to user's clipboard
+  const copyText = `Order Ref: ${tx} | Discord: ${discordUser} | Total: ₹${total}`;
+  navigator.clipboard.writeText(copyText).catch(()=>{});
+
+  alert(`Order submitted! Opening Discord ticket server now.\n\nYour order details are copied. Paste them into your ticket!`);
+  
+  // Redirect buyer to your Discord Server
+  window.open(config.discordInvite, '_blank');
+
+  cart = [];
+  updateCart();
+  closeModal('cartModal');
+  btn.disabled = false;
+  btn.textContent = "🎟️ Submit & Open Discord Ticket";
+}
+
+// --- ADMIN SYSTEM ---
+function unlockAdmin() {
+  const p = document.getElementById('passInput').value;
+  if (p === "Vinnyxontopbitchass") {
+    document.getElementById('pinBox').style.display = 'none';
+    document.getElementById('dashBox').style.display = 'block';
+
+    document.getElementById('setWebhook').value = config.webhook;
+    document.getElementById('setDiscordLink').value = config.discordInvite;
+    document.getElementById('setUPI').value = config.upi;
+    document.getElementById('setLTC').value = config.ltc;
+    renderAdminDrops();
+  } else {
+    alert("Incorrect password!");
+  }
+}
+
+function renderAdminDrops() {
+  document.getElementById('adminDropsList').innerHTML = store.map(s => `
+    <div style="display:flex; justify-content:space-between; align-items:center; background:#161622; padding:8px 10px; border-radius:8px; margin-bottom:6px;">
+      <div>
+        <b style="font-size:12px;">${s.emoji} ${s.name}</b>
+        <div style="font-size:10px; color:#888;">₹${s.price} · ${s.cat}</div>
+      </div>
+      <button onclick="deleteDrop(${s.id})" style="background:#ff336622; color:#ff5577; padding:4px 8px; border-radius:6px; font-weight:700; font-size:11px;">Delete</button>
+    </div>
+  `).join('');
+}
+
+function addDrop() {
+  const name = document.getElementById('addName').value.trim();
+  const cat = document.getElementById('addCat').value.trim() || 'Gaming';
+  const price = parseInt(document.getElementById('addPrice').value, 10);
+  const emoji = document.getElementById('addEmoji').value.trim() || '📦';
+  const desc = document.getElementById('addDesc').value.trim() || 'Instant verified account.';
+
+  // Save Settings
+  config.webhook = document.getElementById('setWebhook').value.trim() || config.webhook;
+  config.discordInvite = document.getElementById('setDiscordLink').value.trim() || config.discordInvite;
+  config.upi = document.getElementById('setUPI').value.trim() || config.upi;
+  config.ltc = document.getElementById('setLTC').value.trim() || config.ltc;
+  localStorage.setItem('v_config_v2', JSON.stringify(config));
+
+  if (!name || isNaN(price)) return alert("Enter name and price!");
+
+  store.push({ id: Date.now(), name, cat, price, emoji, desc });
+  localStorage.setItem('v_store_v2', JSON.stringify(store));
+
+  document.getElementById('addName').value = '';
+  document.getElementById('addPrice').value = '';
+  
+  renderStore();
+  renderAdminDrops();
+  alert("Saved!");
+}
+
+function deleteDrop(id) {
+  store = store.filter(s => s.id !== id);
+  localStorage.setItem('v_store_v2', JSON.stringify(store));
+  renderStore();
+  renderAdminDrops();
+}
+
+// --- DOWNLOAD UPDATED FILE FOR NETLIFY ---
+function downloadUpdatedHTML() {
+  config.webhook = document.getElementById('setWebhook').value.trim() || config.webhook;
+  config.discordInvite = document.getElementById('setDiscordLink').value.trim() || config.discordInvite;
+  config.upi = document.getElementById('setUPI').value.trim() || config.upi;
+  config.ltc = document.getElementById('setLTC').value.trim() || config.ltc;
+
+  let content = document.documentElement.outerHTML;
+  content = content.replace(/let config = \{[\s\S]*?\};/, `let config = ${JSON.stringify(config)};`);
+  content = content.replace(/let store = \[[\s\S]*?\];/, `let store = ${JSON.stringify(store)};`);
+
+  const blob = new Blob(["<!doctype html>\n" + content], { type: "text/html" });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = "index.html";
+  a.click();
+  alert("Downloaded index.html! Upload this directly to Netlify.");
+}
+
+// --- MODALS & AUDIO ---
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+const audio = document.getElementById('audioEl');
+const playBtn = document.getElementById('playBtn');
+let isSynth = false, ctx = null;
+
+async function toggleMusic() {
+  if (!audio.paused || isSynth) {
+    audio.pause();
+    isSynth = false;
+    playBtn.textContent = '▶';
+    document.getElementById('audioStatus').textContent = 'Paused';
+    return;
+  }
+  try {
+    await audio.play();
+    playBtn.textContent = 'Ⅱ';
+    document.getElementById('audioStatus').textContent = 'Playing: music.mp3';
+  } catch(e) {
+    isSynth = true;
+    if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [220, 277.18, 329.63].forEach(f => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = f;
+      gain.gain.value = 0.02;
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      if (!isSynth) osc.stop();
+    });
+    playBtn.textContent = 'Ⅱ';
+    document.getElementById('audioStatus').textContent = 'Playing Ambient Synth';
+  }
+}
+
+// Init
+renderStore();
+updateCart();
+</script>
+</body>
+</html>
